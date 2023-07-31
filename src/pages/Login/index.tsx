@@ -7,8 +7,11 @@ import {Button, Checkbox, FormControlLabel, IconButton} from "@mui/material";
 import {AiFillInfoCircle} from "react-icons/ai";
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from "../../firebase";
+import {useNavigate} from "react-router-dom";
 
 function LoginPage() {
+
+    const navigate = useNavigate();
 
     const {
         setValue,
@@ -25,10 +28,14 @@ function LoginPage() {
         try {
             const userCredentials = await signInWithEmailAndPassword(auth, inputData.emailInput, inputData.passwordInput);
             console.log(userCredentials);
-
-            console.log("logged in successfully!");
+            navigate("/home");
+            navigate(0);
         } catch(error: any) {
-
+            if(error.code === "auth/user-not-found") setError("emailInput", {message: "Bruker eksisterer ikke"});
+            else if(error.code === "auth/wrong-password") {
+                setError("emailInput", {message: "Feil email eller passord"});
+                setError("passwordInput", {message: "Feil email eller passord"});
+            }
         }
     };
 
