@@ -1,13 +1,13 @@
 import {FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel} from "@mui/material";
 import {BiSolidHide, BiSolidShow} from "react-icons/bi";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {TiDelete} from "react-icons/ti";
 
 type inputFieldProps = {
     register: any,
     errorMsg: string | undefined,
     placeholder: string,
-    id: "emailInput" | "passwordInput",
+    id: "emailInput" | "passwordInput" | "usernameInput"
     type: "text" | "password",
     setValue: (name: any, value: any) => void,
 }

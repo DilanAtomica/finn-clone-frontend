@@ -5,13 +5,17 @@ import {useForm, SubmitHandler} from "react-hook-form";
 import InputField from "../../components/Form/InputField";
 import {Button, Checkbox, FormControlLabel, IconButton} from "@mui/material";
 import {AiFillInfoCircle} from "react-icons/ai";
-import {signInWithEmailAndPassword} from 'firebase/auth';
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from "../../firebase";
 import {useNavigate} from "react-router-dom";
+import {useRegister} from "./hooks";
+import useAuth from "../../stores/auth.ts";
 
-function LoginPage() {
+function RegisterPage() {
 
     const navigate = useNavigate();
+
+    const {mutateAsync: registerUser} = useRegister();
 
     const {
         setValue,
@@ -22,26 +26,29 @@ function LoginPage() {
     } = useForm<ValidationSchema>({
         resolver: zodResolver(validationSchema),
     });
-    const validateInputs: SubmitHandler<ValidationSchema> = (inputData: ValidationSchema) => handleOnLogin(inputData);
+    const validateInputs: SubmitHandler<ValidationSchema> = (inputData: ValidationSchema) => handleOnRegister(inputData);
 
-    const handleOnLogin = async(inputData: ValidationSchema) => {
+    const handleOnRegister = async(inputData: ValidationSchema) => {
         try {
-            const userCredentials = await signInWithEmailAndPassword(auth, inputData.emailInput, inputData.passwordInput);
-            console.log(userCredentials);
+            const userCredentials = await createUserWithEmailAndPassword(auth, inputData.emailInput, inputData.passwordInput);
+            await registerUser({
+                userID: userCredentials.user.uid,
+                emailInput: inputData.emailInput,
+                passwordInput: inputData.passwordInput,
+                usernameInput: inputData.usernameInput,
+            });
+            await signInWithEmailAndPassword(auth, inputData.emailInput, inputData.passwordInput);
             navigate("/home");
             navigate(0);
         } catch(error: any) {
-            console.log(error)
-            if(error.code === "auth/user-not-found") setError("emailInput", {message: "Bruker eksisterer ikke"});
-            else if(error.code === "auth/wrong-password") {
-                setError("emailInput", {message: "Feil email eller passord"});
-                setError("passwordInput", {message: "Feil email eller passord"});
-            }
+            console.log(error.code);
+            if(error.code === "auth/email-already-in-use") setError("emailInput", {message: "E-postadresse eksistrer allerede"});
+
         }
     };
 
     return (
-        <main className="loginPage">
+        <main className="registerPage">
             <div className="signInAdvice-container">
                 <img src={"https://static.finncdn.no/_c/static/finn_iphone_98x200.png"}  alt={"Finn på mobil"}/>
                 <p>Logg inn for å sende meldinger, lagre favoritter og søk. Du får også varsler når det skjer noe nytt!</p>
@@ -54,11 +61,11 @@ function LoginPage() {
                     <a href={"#"}><img id={"schibstedLogo"} src={"https://d3iwtia3ndepsv.cloudfront.net/web/v4.5.11/assets/4c671371b02d586f499a4d89bf58fa50.png"} alt={"Schibsted logo"} /></a>
                 </div>
 
-                <h1>Logg inn</h1>
+                <h1>Opprett bruker</h1>
 
-                <InputField setValue={setValue} register={register} errorMsg={errors.emailInput?.message} placeholder={"Skriv inn din e-postadresse"} id={"emailInput"} type={"text"} />
-                <InputField setValue={setValue}  register={register} errorMsg={errors.passwordInput?.message} placeholder={"Skriv inn ditt passord"} id={"passwordInput"} type={"password"} />
-                <a href={"#"}>Glemt passord?</a>
+                <InputField setValue={setValue} register={register} errorMsg={errors.usernameInput?.message} placeholder={"Skriv inn brukernavn"} id={"usernameInput"} type={"text"} />
+                <InputField setValue={setValue} register={register} errorMsg={errors.emailInput?.message} placeholder={"Skriv inn e-postadresse"} id={"emailInput"} type={"text"} />
+                <InputField setValue={setValue}  register={register} errorMsg={errors.passwordInput?.message} placeholder={"Skriv inn passord"} id={"passwordInput"} type={"password"} />
 
                 <div className="checkbox-container">
                     <FormControlLabel control={<Checkbox defaultChecked size={"medium"} />} label="Hold meg innlogget" />
@@ -67,11 +74,11 @@ function LoginPage() {
                     </IconButton>
                 </div>
 
-                <Button disabled={errors.emailInput?.message !== undefined || errors.passwordInput?.message !== undefined} sx={{textTransform: "none", fontSize: "1rem", padding: "0.5rem 0", margin: "1rem 0"}} type={"submit"} variant="contained">Logg på</Button>
-                <Button onClick={() => navigate("/register")} sx={{textTransform: "none", fontSize: "1rem", padding: "0.5rem 0"}} variant="text">Opprette ny konto</Button>
+                <Button disabled={errors.emailInput?.message !== undefined || errors.passwordInput?.message !== undefined} sx={{textTransform: "none", fontSize: "1rem", padding: "0.5rem 0", margin: "1rem 0"}} type={"submit"} variant="contained">Opprett bruker</Button>
+                <Button onClick={() => navigate("/login")} sx={{textTransform: "none", fontSize: "1rem", padding: "0.5rem 0"}} variant="text">Logg på</Button>
             </form>
         </main>
     );
 }
 
-export default LoginPage;
+export default RegisterPage;
