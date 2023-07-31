@@ -3,6 +3,7 @@ import PublicRoutes from "./PublicRoutes.tsx";
 import React from "react";
 
 const Login = React.lazy(() => import("../pages/Login/index"));
+const Home = React.lazy(() => import("../pages/Home/index"));
 
 function AppRoutes() {
 
@@ -11,6 +12,7 @@ function AppRoutes() {
             <Route errorElement={<h1>There is nothing to see here...</h1>}>
                 <Route element={<><PublicRoutes/></>}>
                     <Route element={<><Login/></>} path="/login"/>
+                    <Route element={<><Home/></>} path="/home"/>
                 </Route>
             </Route>
         )

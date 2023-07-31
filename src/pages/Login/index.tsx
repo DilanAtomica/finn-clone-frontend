@@ -5,7 +5,8 @@ import {useForm, SubmitHandler} from "react-hook-form";
 import InputField from "../../components/Form/InputField";
 import {Button, Checkbox, FormControlLabel, IconButton} from "@mui/material";
 import {AiFillInfoCircle} from "react-icons/ai";
-import {useState} from "react";
+import {signInWithEmailAndPassword} from 'firebase/auth';
+import {auth} from "../../firebase";
 
 function LoginPage() {
 
@@ -22,7 +23,10 @@ function LoginPage() {
 
     const handleOnLogin = async(inputData: ValidationSchema) => {
         try {
-            console.log(inputData);
+            const userCredentials = await signInWithEmailAndPassword(auth, inputData.emailInput, inputData.passwordInput);
+            console.log(userCredentials);
+
+            console.log("logged in successfully!");
         } catch(error: any) {
 
         }
