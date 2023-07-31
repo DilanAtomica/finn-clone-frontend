@@ -44,7 +44,7 @@
 }
 
 .loginForm-container {
-    width: 24rem;
+    min-width: 24rem;
     min-height: max-content;
     border-radius: 1rem;
     background-color: white;
@@ -76,12 +76,17 @@
     height: 1.5rem;
 }
 
-.loginForm-container > h1 {
+.loginForm-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.loginForm-body > h1 {
     font-size: 1.5rem;
     margin-bottom: 0.25rem;
 }
 
-.loginForm-container label {
+.loginForm-body label {
     font-weight: 500;
     font-size: 1.05rem;
     color: rgba(0, 0, 0, 0.54);
@@ -91,14 +96,14 @@
     background-color: rgb(232,232,232);
 }
 
-.loginForm-container  p {
+.loginForm-body  p {
     color: rgba(0, 0, 0, 0.4);
     font-size: 0.75rem;
     font-weight: 500;
     margin: 0.25rem 0;
 }
 
-.loginForm-container > a {
+.loginForm-body > a {
     font-size: 0.9rem;
     font-weight: 500;
     color: rgb(70,139,252);
@@ -115,4 +120,27 @@
 .checkbox-container span {
   font-size: 0.9rem;
     font-weight: 500;
+}
+
+@media (max-width: 600px) {
+    .loginForm-container {
+        height: 100%;
+        width: 100%;
+        border-radius: 0;
+        outline: solid red;
+    }
+
+    .loginForm-header {
+        border-bottom: 1px solid rgba(0,0,0,.3);
+        margin: 0.75rem 0 2rem 0;
+        padding: 0 1rem 0.25rem 1rem;
+    }
+
+    .loginForm-header > a > #schibstedLogo {
+        height: 1.3rem;
+    }
+
+    .loginForm-body {
+        margin: 0 1.5rem;
+    }
 }

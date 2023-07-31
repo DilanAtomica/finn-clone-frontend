@@ -31,11 +31,9 @@ function App() {
 
     const authentication = async()=> {
         await onAuthStateChanged(auth, async(user)=> {
-            console.log(user);
             if(user) {
                 const authToken = await user.getIdToken();
                 changeToken(authToken);
-                console.log(authToken);
                 changeIsAuth(true);
             }
             else {
